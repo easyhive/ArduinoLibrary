@@ -32,8 +32,13 @@ unsigned long weight_value;
 float weight_calib = 1.0;
 float weight_offset = 1.0;
 
+//calibration weights in gram
+const unsigned long calibration_weight = 1000;
+const unsigned long tare_weight = 0;
+
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
+
 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
@@ -153,6 +158,10 @@ void init_Weight(void){
     SerialUSB.println("Init ADS1232");
     pinMode(PDWN, OUTPUT);
     digitalWrite(PDWN, HIGH);
+
+    pinMode(TEMP, OUTPUT);
+    digitalWrite(TEMP, LOW);
+
     if (!adc.begin()) {
         Serial.println("Invalid pins bro!");
     }    
@@ -221,13 +230,19 @@ float get_Temp(void){
     return sensors.getTempCByIndex(0); 
 }
 
-float get_Weight_raw(void){
+long get_Weight_raw(void){
     long val;
     if(adc.getValue(val))
         return val; 
 }
 
 float get_Weight(void){
+
+    //Datasheet ADS1232 page 8 -> w = m * val + wzs - calibration_weight
+
+    //m = (calibration_weight / (weight_calib - weight_offset)) 
+    //wzs = -m * weight_offset
+
     long val;
     if(adc.getValue(val)){        //this call blocks until a sample is ready!
     //  SerialUSB.print(millis());
@@ -238,7 +253,15 @@ float get_Weight(void){
         //SerialUSB.println("Failed to get data");
     }
     //delay(500);
-    return (weight_offset/weight_calib)*val; 
+    
+    unsigned long w_tare = 0;
+
+    float result = 0; 
+    float m = (calibration_weight / (weight_calib - weight_offset));
+    float wzs = (-m) * weight_offset;
+    result = m * val + wzs - tare_weight;
+
+    return result; 
 }
 
 /******************* NBIOT Functions ********************/

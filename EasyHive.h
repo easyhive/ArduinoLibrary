@@ -11,7 +11,7 @@
 #define CLK_PIN WEIGHT_CLK
 #define DATA_PIN WEIGHT_DATA
 #define PDWN WEIGHT_PDWN
-#define TMP WEIGHT_TMP  
+#define TEMP WEIGHT_TEMP  
 
 // Data wire is plugged into port 2 on the Arduino
 #define ONE_WIRE_BUS SARA_TX_ENABLE
@@ -42,7 +42,7 @@ void init_Weight(void);
 void init_Temp(void);
 
 float get_Weight(void);
-float get_Weight_raw(void);
+long get_Weight_raw(void);
 
 void set_Weight_calib(float val_c, float val_o);
 void get_Weight_calib(float* val_c, float* val_o);
