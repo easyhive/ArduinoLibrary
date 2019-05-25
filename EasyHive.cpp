@@ -326,7 +326,7 @@ const char* sendMessageThroughUDP(const char param[STDSTRINGLEN])
     size_t size = strlen(strBuffer);
 
     // send data
-    int lengthSent = nbiot.socketSend(socketID, "18.184.113.47", 2222, strBuffer); // "195.34.89.241" : 7 is the ublox echo service
+    int lengthSent = nbiot.socketSend(socketID, "<yourSERVERIPhere", <yourPORThere>, strBuffer); // "195.34.89.241" : 7 is the ublox echo service
 
     DEBUG_STREAM.print("String length vs sent: ");
     DEBUG_STREAM.print(size);
